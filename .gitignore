@@ -1,0 +1,9 @@
+node_modules/
+.next/
+data/
+db/
+download/
+runtime/
+*.db
+*.db-journal
+.env
