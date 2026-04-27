@@ -3,6 +3,7 @@ import { lanBridge } from '@/lib/lan-bridge-core'
 import { chatBus } from '@/lib/chat-bus'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 /**
  * Sync a web user's status change to the LAN network.

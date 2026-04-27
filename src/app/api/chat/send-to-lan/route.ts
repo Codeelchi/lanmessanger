@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { chatBus } from '@/lib/chat-bus'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 /**
  * Send a message from a web user to a LAN Messenger user via UDP.

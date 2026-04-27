@@ -26,7 +26,18 @@
  */
 
 import dgram from 'node:dgram'
+import net from 'node:net'
 import { networkInterfaces, hostname } from 'node:os'
+import {
+  constants,
+  createCipheriv,
+  createDecipheriv,
+  createHash,
+  generateKeyPairSync,
+  privateDecrypt,
+  publicEncrypt,
+  randomBytes,
+} from 'node:crypto'
 import { chatBus } from './chat-bus'
 import { db } from './db'
 
@@ -67,6 +78,18 @@ export interface LANBridgeStatus {
   uptime: number
 }
 
+interface TcpPeer {
+  userId: string
+  address: string
+  socket: net.Socket
+  ready: boolean
+  connecting: boolean
+  buffer: Buffer
+  pendingXml: string[]
+  key?: Buffer
+  iv?: Buffer
+}
+
 // ==================== LANBridge Class ====================
 
 class LANBridge {
@@ -86,6 +109,10 @@ class LANBridge {
 
   private udpReceiver: dgram.Socket | null = null
   private udpSender: dgram.Socket | null = null
+  private tcpServer: net.Server | null = null
+  private tcpPeers = new Map<string, TcpPeer>()
+  private publicKeyPem: Buffer | null = null
+  private privateKeyPem: Buffer | null = null
 
   private get udpPort(): number {
     return parseInt(process.env.UDP_PORT || String(DEFAULT_UDP_PORT), 10)
@@ -99,6 +126,7 @@ class LANBridge {
     try {
       this.initIdentity()
       this.discoverBroadcastAddresses()
+      this.ensureTcpKeyPair()
 
       this.udpReceiver = dgram.createSocket({ type: 'udp4', reuseAddr: true })
       this.udpSender = dgram.createSocket({ type: 'udp4', reuseAddr: true })
@@ -149,6 +177,8 @@ class LANBridge {
         console.error(`[LAN Bridge] UDP sender error: ${err.message}`)
       })
 
+      await this.startTcpServer()
+
       this.sendAnnounce()
 
       // After announce, send userdata to all known LAN users so they know our display name
@@ -173,8 +203,10 @@ class LANBridge {
       console.log('[LAN Bridge] Continuing without LAN support...')
       this.udpReceiver?.close()
       this.udpSender?.close()
+      this.tcpServer?.close()
       this.udpReceiver = null
       this.udpSender = null
+      this.tcpServer = null
     }
   }
 
@@ -191,8 +223,14 @@ class LANBridge {
       setTimeout(() => {
         this.udpReceiver?.close()
         this.udpSender?.close()
+        this.tcpServer?.close()
+        for (const peer of this.tcpPeers.values()) {
+          peer.socket.destroy()
+        }
         this.udpReceiver = null
         this.udpSender = null
+        this.tcpServer = null
+        this.tcpPeers.clear()
         resolve()
       }, 500)
     })
@@ -224,11 +262,13 @@ class LANBridge {
    * Update the display name used in LAN protocol messages.
    * Call this when a web user changes their profile name.
    */
-  setUsername(name: string): void {
+  setUsername(name: string): boolean {
     if (name && name.trim()) {
       this.localUserName = name.trim()
       console.log(`[LAN Bridge] Username updated to: ${this.localUserName}`)
+      return true
     }
+    return false
   }
 
   /**
@@ -261,16 +301,7 @@ class LANBridge {
     console.log(`[LAN Bridge]   from=${this.localUserId}, to=${targetUserId}`)
     console.log(`[LAN Bridge]   XML: ${xml.substring(0, 300)}`)
 
-    // Method 1: MESSAG datagram directly to target's IP
-    const directDatagram = this.buildDatagram('MESSAG', xml)
-    this.sendUdpTo(directDatagram, targetUser.ip, this.udpPort)
-    console.log(`[LAN Bridge]   Sent MESSAG direct to ${targetUser.ip}:${this.udpPort}`)
-
-    // Method 2: BRDCST datagram to broadcast (fallback)
-    // The <to> field ensures only the target processes it
-    const broadcastDatagram = this.buildDatagram('BRDCST', xml)
-    this.sendBroadcastDatagram(broadcastDatagram)
-    console.log(`[LAN Bridge]   Sent BRDCST broadcast (fallback)`)
+    this.queueTcpXml(targetUser, xml)
 
     console.log(`[LAN Bridge] DM sent to ${targetUser.name}: ${content.substring(0, 80)}`)
     return true
@@ -291,10 +322,11 @@ class LANBridge {
       { message: content, broadcast: content, name: this.localUserName }
     )
 
-    const datagram = this.buildDatagram('BRDCST', xml)
-    console.log(`[LAN Bridge] Sending broadcast (len=${datagram.length})`)
+    console.log(`[LAN Bridge] Sending broadcast to ${this.lanUsers.size} LAN users`)
     console.log(`[LAN Bridge]   from=${this.localUserId}, XML: ${xml.substring(0, 300)}`)
-    this.sendBroadcastDatagram(datagram)
+    for (const user of this.lanUsers.values()) {
+      this.queueTcpXml(user, xml)
+    }
     console.log(`[LAN Bridge] Broadcast sent: ${content.substring(0, 80)}`)
     return true
   }
@@ -323,8 +355,9 @@ class LANBridge {
       { status: lanStatus, name: this.localUserName || '' }
     )
 
-    const datagram = this.buildDatagram('BRDCST', xml)
-    this.sendBroadcastDatagram(datagram)
+    for (const user of this.lanUsers.values()) {
+      this.queueTcpXml(user, xml)
+    }
     console.log(`[LAN Bridge] Sent status update: ${lanStatus}`)
     return true
   }
@@ -365,8 +398,9 @@ class LANBridge {
       { note, name: this.localUserName || '' }
     )
 
-    const datagram = this.buildDatagram('BRDCST', xml)
-    this.sendBroadcastDatagram(datagram)
+    for (const user of this.lanUsers.values()) {
+      this.queueTcpXml(user, xml)
+    }
     console.log(`[LAN Bridge] Sent note update: ${note.substring(0, 60)}`)
     return true
   }
@@ -387,8 +421,7 @@ class LANBridge {
       { message: state, name: this.localUserName || '' }
     )
 
-    const datagram = this.buildDatagram('MESSAG', xml)
-    this.sendUdpTo(datagram, targetUser.ip, this.udpPort)
+    this.queueTcpXml(targetUser, xml)
     console.log(`[LAN Bridge] Sent chatstate '${state}' to ${targetUser.name}`)
     return true
   }
@@ -407,17 +440,18 @@ class LANBridge {
     const xml = this.buildXmlMessage(
       { from: this.localUserId, to: targetUserId, messageid: id, type: 'userdata' },
       {
+        userid: this.localUserId,
         name: this.localUserName,
         status: this.localStatus,
         version: APP_VERSION,
         address: this.localAddress || '',
         note: this.localNote,
         usercaps: String(0),
+        queryop: 'result',
       }
     )
 
-    const datagram = this.buildDatagram('MESSAG', xml)
-    this.sendUdpTo(datagram, targetUser.ip, this.udpPort)
+    this.queueTcpXml(targetUser, xml)
     console.log(`[LAN Bridge] Sent userdata to ${targetUser.name}`)
     return true
   }
@@ -437,8 +471,7 @@ class LANBridge {
       { version: APP_VERSION, name: this.localUserName || '' }
     )
 
-    const datagram = this.buildDatagram('MESSAG', xml)
-    this.sendUdpTo(datagram, targetUser.ip, this.udpPort)
+    this.queueTcpXml(targetUser, xml)
     console.log(`[LAN Bridge] Sent version response to ${targetUser.name}`)
     return true
   }
@@ -456,6 +489,7 @@ class LANBridge {
     const xml = this.buildXmlMessage(
       { from: this.localUserId, to: targetUserId, messageid: id, type: 'info' },
       {
+        userid: this.localUserId,
         name: this.localUserName,
         status: this.localStatus,
         version: APP_VERSION,
@@ -465,8 +499,7 @@ class LANBridge {
       }
     )
 
-    const datagram = this.buildDatagram('MESSAG', xml)
-    this.sendUdpTo(datagram, targetUser.ip, this.udpPort)
+    this.queueTcpXml(targetUser, xml)
     console.log(`[LAN Bridge] Sent info response to ${targetUser.name}`)
     return true
   }
@@ -483,11 +516,10 @@ class LANBridge {
     const id = String(this.msgId++)
     const xml = this.buildXmlMessage(
       { from: this.localUserId, to: targetUserId, messageid: id, type: 'acknowledge' },
-      { message: messageId, name: this.localUserName || '' }
+      { messageid: messageId, name: this.localUserName || '' }
     )
 
-    const datagram = this.buildDatagram('MESSAG', xml)
-    this.sendUdpTo(datagram, targetUser.ip, this.udpPort)
+    this.queueTcpXml(targetUser, xml)
     return true
   }
 
@@ -499,6 +531,7 @@ class LANBridge {
     const xml = this.buildXmlMessage(
       { from: this.localUserId, messageid: id, type: 'announce' },
       {
+        userid: this.localUserId,
         name: this.localUserName,
         status: this.localStatus,
         version: APP_VERSION,
@@ -508,8 +541,7 @@ class LANBridge {
       }
     )
 
-    const datagram = this.buildDatagram('BRDCST', xml)
-    this.sendBroadcastDatagram(datagram)
+    this.sendBroadcastDatagram(Buffer.from(xml, 'utf-8'))
     console.log(`[LAN Bridge] Sent announce (id: ${id})`)
   }
 
@@ -579,6 +611,209 @@ class LANBridge {
     }
   }
 
+  // ==================== TCP Messenger Transport ====================
+
+  private ensureTcpKeyPair(): void {
+    if (this.publicKeyPem && this.privateKeyPem) return
+
+    const { publicKey, privateKey } = generateKeyPairSync('rsa', {
+      modulusLength: 1024,
+      publicExponent: 0x10001,
+      publicKeyEncoding: { type: 'pkcs1', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs1', format: 'pem' },
+    })
+
+    this.publicKeyPem = Buffer.from(publicKey)
+    this.privateKeyPem = Buffer.from(privateKey)
+  }
+
+  private async startTcpServer(): Promise<void> {
+    if (this.tcpServer) return
+
+    this.tcpServer = net.createServer((socket) => this.handleIncomingTcpSocket(socket))
+
+    await new Promise<void>((resolve) => {
+      this.tcpServer!.once('error', (err: NodeJS.ErrnoException) => {
+        console.error(`[LAN Bridge] TCP server error on port ${this.udpPort}: ${err.message}`)
+        this.tcpServer?.close()
+        this.tcpServer = null
+        resolve()
+      })
+
+      this.tcpServer!.listen(this.udpPort, '0.0.0.0', () => {
+        console.log(`[LAN Bridge] TCP listener bound to port ${this.udpPort}`)
+        resolve()
+      })
+    })
+  }
+
+  private handleIncomingTcpSocket(socket: net.Socket): void {
+    socket.once('data', (data) => {
+      const buffer = Buffer.isBuffer(data) ? data : Buffer.from(data)
+      if (!buffer.subarray(0, 3).toString('utf-8').startsWith('MSG')) {
+        socket.destroy()
+        return
+      }
+
+      const userId = buffer.subarray(3).toString('utf-8')
+      const address = socket.remoteAddress?.replace(/^::ffff:/, '') || ''
+      const peer = this.createTcpPeer(userId, address, socket, false)
+      this.sendTcpFrame(peer, this.buildDatagram('PUBKEY', this.publicKeyPem!.toString('utf-8')))
+      console.log(`[LAN Bridge] Accepted TCP message stream from ${userId} (${address})`)
+    })
+  }
+
+  private createTcpPeer(userId: string, address: string, socket: net.Socket, connecting: boolean): TcpPeer {
+    const existing = this.tcpPeers.get(userId)
+    if (existing) {
+      existing.socket.destroy()
+    }
+
+    const peer: TcpPeer = {
+      userId,
+      address,
+      socket,
+      ready: false,
+      connecting,
+      buffer: Buffer.alloc(0),
+      pendingXml: existing?.pendingXml || [],
+    }
+
+    this.tcpPeers.set(userId, peer)
+    socket.on('data', (chunk) => this.handleTcpData(peer, Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)))
+    socket.on('close', () => {
+      if (this.tcpPeers.get(userId) === peer) this.tcpPeers.delete(userId)
+    })
+    socket.on('error', (err) => {
+      console.error(`[LAN Bridge] TCP error for ${userId}: ${err.message}`)
+    })
+    return peer
+  }
+
+  private ensureTcpConnection(user: LANUser): TcpPeer | null {
+    let peer = this.tcpPeers.get(user.id)
+    if (peer && (peer.ready || peer.connecting)) return peer
+    if (!this.localUserId) return null
+
+    const socket = net.createConnection({ host: user.ip, port: this.udpPort })
+    peer = this.createTcpPeer(user.id, user.ip, socket, true)
+
+    socket.on('connect', () => {
+      socket.write(Buffer.from(`MSG${this.localUserId}`, 'utf-8'))
+      console.log(`[LAN Bridge] Connected TCP message stream to ${user.name} (${user.ip}:${this.udpPort})`)
+    })
+
+    return peer
+  }
+
+  private handleTcpData(peer: TcpPeer, chunk: Buffer): void {
+    peer.connecting = false
+    peer.buffer = Buffer.concat([peer.buffer, chunk])
+
+    while (peer.buffer.length >= 4) {
+      const frameLength = peer.buffer.readUInt32BE(0)
+      if (peer.buffer.length < frameLength + 4) return
+
+      const frame = peer.buffer.subarray(4, frameLength + 4)
+      peer.buffer = peer.buffer.subarray(frameLength + 4)
+      this.handleTcpFrame(peer, frame)
+    }
+  }
+
+  private handleTcpFrame(peer: TcpPeer, frame: Buffer): void {
+    const parsed = this.parseDatagram(frame)
+    if (!parsed) return
+
+    if (parsed.type === 'PUBKEY') {
+      const { key, iv, encryptedKeyIv } = this.createAesForPublicKey(Buffer.from(parsed.xml, 'utf-8'))
+      peer.key = key
+      peer.iv = iv
+      peer.ready = true
+      this.sendTcpFrame(peer, Buffer.concat([Buffer.from('HNDSHK'), encryptedKeyIv]))
+      this.flushTcpPeer(peer)
+      return
+    }
+
+    if (parsed.type === 'HNDSHK') {
+      if (!this.privateKeyPem) return
+      const keyIv = privateDecrypt({
+        key: this.privateKeyPem,
+        padding: constants.RSA_PKCS1_OAEP_PADDING,
+        oaepHash: 'sha1',
+      }, frame.subarray(6))
+      peer.key = keyIv.subarray(0, 32)
+      peer.iv = keyIv.subarray(32, 48)
+      peer.ready = true
+      this.flushTcpPeer(peer)
+      return
+    }
+
+    if (parsed.type === 'MESSAG') {
+      if (!peer.key || !peer.iv) return
+      const decipher = createDecipheriv('aes-256-cbc', peer.key, peer.iv)
+      const xml = Buffer.concat([decipher.update(frame.subarray(6)), decipher.final()]).toString('utf-8')
+      this.handleUserDatagram(xml, { address: peer.address, port: this.udpPort })
+    }
+  }
+
+  private queueTcpXml(user: LANUser, xml: string): void {
+    const peer = this.ensureTcpConnection(user)
+    if (!peer) return
+
+    peer.pendingXml.push(xml)
+    this.flushTcpPeer(peer)
+  }
+
+  private flushTcpPeer(peer: TcpPeer): void {
+    if (!peer.ready || !peer.key || !peer.iv) return
+
+    while (peer.pendingXml.length > 0) {
+      const xml = peer.pendingXml.shift()
+      if (!xml) continue
+      const cipher = createCipheriv('aes-256-cbc', peer.key, peer.iv)
+      const encrypted = Buffer.concat([cipher.update(Buffer.from(xml, 'utf-8')), cipher.final()])
+      this.sendTcpFrame(peer, Buffer.concat([Buffer.from('MESSAG'), encrypted]))
+    }
+  }
+
+  private sendTcpFrame(peer: TcpPeer, payload: Buffer): void {
+    const header = Buffer.alloc(4)
+    header.writeUInt32BE(payload.length, 0)
+    peer.socket.write(Buffer.concat([header, payload]))
+  }
+
+  private createAesForPublicKey(publicKeyPem: Buffer): { key: Buffer; iv: Buffer; encryptedKeyIv: Buffer } {
+    const keyData = randomBytes(32)
+    const keyIv = this.evpBytesToKey(keyData, 48, 5)
+    const encryptedKeyIv = publicEncrypt({
+      key: publicKeyPem,
+      padding: constants.RSA_PKCS1_OAEP_PADDING,
+      oaepHash: 'sha1',
+    }, keyIv)
+
+    return {
+      key: keyIv.subarray(0, 32),
+      iv: keyIv.subarray(32, 48),
+      encryptedKeyIv,
+    }
+  }
+
+  private evpBytesToKey(data: Buffer, length: number, rounds: number): Buffer {
+    const chunks: Buffer[] = []
+    let previous = Buffer.alloc(0)
+
+    while (Buffer.concat(chunks).length < length) {
+      let digest = Buffer.concat([previous, data])
+      for (let i = 0; i < rounds; i++) {
+        digest = createHash('sha1').update(digest).digest()
+      }
+      chunks.push(digest)
+      previous = digest
+    }
+
+    return Buffer.concat(chunks).subarray(0, length)
+  }
+
   // ==================== XML Message Handling ====================
 
   private buildXmlMessage(head: Record<string, string>, body: Record<string, string> = {}): string {
@@ -640,6 +875,7 @@ class LANBridge {
       const body: Record<string, string> = {}
       if (bodyMatch) {
         const bodyXml = bodyMatch[1]
+        tagRegex.lastIndex = 0
         while ((match = tagRegex.exec(bodyXml)) !== null) {
           const [, key, value] = match
           const trimmed = value.trim()
@@ -723,8 +959,7 @@ class LANBridge {
       type: 'depart',
     })
 
-    const datagram = this.buildDatagram('BRDCST', xml)
-    this.sendBroadcastDatagram(datagram)
+    this.sendBroadcastDatagram(Buffer.from(xml, 'utf-8'))
     console.log('[LAN Bridge] Sent depart')
   }
 
@@ -805,7 +1040,10 @@ class LANBridge {
           if (body.note !== undefined) existingUser.note = body.note || ''
           if (body.about !== undefined) existingUser.note = body.about || existingUser.note
           if (body.address) existingUser.address = body.address
+          existingUser.ip = rinfo.address
         }
+        const user = this.lanUsers.get(fromUserId)
+        if (user) this.ensureTcpConnection(user)
         break
       }
 
@@ -1150,7 +1388,7 @@ class LANBridge {
 
       case 'acknowledge': {
         // Message was delivered — update message status in DB
-        const ackedMsgId = body.message || ''
+        const ackedMsgId = body.messageid || body.message || ''
         if (ackedMsgId) {
           console.log(`[LAN Bridge] Message acknowledged by ${fromUserId}: ${ackedMsgId}`)
           chatBus.emit('lan-message-acknowledged', {

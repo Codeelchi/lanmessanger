@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { chatBus } from '@/lib/chat-bus'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 // POST /api/chat/status-message
 export async function POST(request: NextRequest) {

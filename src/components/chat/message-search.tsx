@@ -130,6 +130,17 @@ function getRoomLabel(type: string) {
   }
 }
 
+function getRoomIcon(type: string) {
+  switch (type) {
+    case 'broadcast':
+      return <Radio className="h-4 w-4 text-blue-500" />
+    case 'group':
+      return <Users className="h-4 w-4 text-purple-500" />
+    default:
+      return <MessageSquare className="h-4 w-4 text-emerald-500" />
+  }
+}
+
 export function MessageSearch({
   open,
   onOpenChange,

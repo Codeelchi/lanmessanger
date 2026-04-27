@@ -103,15 +103,15 @@ export function useLANUsers(enabled = true): UseLANUsersReturn {
   // Initial fetch + polling
   useEffect(() => {
     if (!enabled) {
-      setIsLoading(false)
       return
     }
 
-    fetchData()
+    const fetchTimer = setTimeout(fetchData, 0)
 
     intervalRef.current = setInterval(fetchData, POLL_INTERVAL)
 
     return () => {
+      clearTimeout(fetchTimer)
       if (intervalRef.current) {
         clearInterval(intervalRef.current)
         intervalRef.current = null
@@ -123,7 +123,7 @@ export function useLANUsers(enabled = true): UseLANUsersReturn {
     lanUsers,
     lanStatus,
     isBridgeRunning: lanStatus?.running ?? false,
-    isLoading,
+    isLoading: enabled ? isLoading : false,
     refetch,
   }
 }

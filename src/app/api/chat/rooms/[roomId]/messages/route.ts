@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function GET(
   request: NextRequest,
@@ -26,7 +27,7 @@ export async function GET(
     })
 
     // Manually fetch senders in batch
-    const senderIds = [...new Set(messages.map((m) => m.senderId).filter(Boolean))]
+    const senderIds = [...new Set(messages.map((m) => m.senderId).filter((id): id is string => Boolean(id)))]
     const senders = senderIds.length > 0
       ? await db.user.findMany({
           where: { id: { in: senderIds } },
@@ -36,7 +37,7 @@ export async function GET(
     const senderMap = new Map(senders.map((s) => [s.id, s]))
 
     // Manually fetch reply messages
-    const replyToIds = [...new Set(messages.map((m) => m.replyToId).filter(Boolean))]
+    const replyToIds = [...new Set(messages.map((m) => m.replyToId).filter((id): id is string => Boolean(id)))]
     const replyMessages = replyToIds.length > 0
       ? await db.message.findMany({
           where: { id: { in: replyToIds } },
@@ -46,7 +47,7 @@ export async function GET(
     const replyMap = new Map(replyMessages.map((r) => [r.id, r]))
 
     // Get sender info for replies
-    const replySenderIds = [...new Set(replyMessages.map((r) => r.senderId).filter(Boolean))]
+    const replySenderIds = [...new Set(replyMessages.map((r) => r.senderId).filter((id): id is string => Boolean(id)))]
     const replySenders = replySenderIds.length > 0
       ? await db.user.findMany({
           where: { id: { in: replySenderIds } },
@@ -98,6 +99,7 @@ export async function GET(
         type: m.deletedAt ? 'system' : m.type,
         fileUrl: m.fileUrl || '',
         fileName: m.fileName || '',
+        fileType: '',
         status: m.status,
         timestamp: m.createdAt.toISOString(),
         editedAt: m.editedAt?.toISOString() || null,

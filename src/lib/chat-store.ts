@@ -315,7 +315,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   setTyping: (roomId, userId) =>
     set((state) => {
       const typingUsers = new Map(state.typingUsers)
-      const roomTyping = new Map(typingUsers.get(roomId) || {})
+      const roomTyping = new Map(typingUsers.get(roomId) ?? new Map<string, number>())
       roomTyping.set(userId, Date.now())
       typingUsers.set(roomId, roomTyping)
       return { typingUsers }
@@ -324,7 +324,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
   clearTyping: (roomId, userId) =>
     set((state) => {
       const typingUsers = new Map(state.typingUsers)
-      const roomTyping = new Map(typingUsers.get(roomId) || {})
+      const roomTyping = new Map(typingUsers.get(roomId) ?? new Map<string, number>())
       roomTyping.delete(userId)
       if (roomTyping.size === 0) {
         typingUsers.delete(roomId)

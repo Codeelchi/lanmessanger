@@ -4,6 +4,7 @@ import { chatBus } from '@/lib/chat-bus'
 import { lanBridge } from '@/lib/lan-bridge-core'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 interface JoinBody {
   username: string
@@ -68,7 +69,11 @@ export async function POST(request: NextRequest) {
         room: {
           include: {
             members: { include: { user: true } },
-            messages: { orderBy: { createdAt: 'desc' }, take: 1 },
+            messages: {
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              include: { sender: true },
+            },
           },
         },
       },

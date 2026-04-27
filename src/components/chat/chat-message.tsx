@@ -52,7 +52,7 @@ function RenderMessageContent({ content, isOwn }: { content: string; isOwn: bool
   }
 
   // Build parts array: alternating between text and link segments
-  const parts: { type: 'text'; value: string } | { type: 'link'; value: string }[] = []
+  const parts: ({ type: 'text'; value: string } | { type: 'link'; value: string })[] = []
   let lastIndex = 0
 
   for (const link of links) {
@@ -312,8 +312,8 @@ export function ChatMessage({ message, isOwn, showSender, isGrouped, isLastInGro
   const [hovered, setHovered] = useState(false)
   const [animateReactions, setAnimateReactions] = useState(false)
   const [showReactionBar, setShowReactionBar] = useState(false)
-  const animTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
-  const reactionBarTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const animTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const reactionBarTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [copied, setCopied] = useState(false)
   const updateMessageReactions = useChatStore((s) => s.updateMessageReactions)
   const bookmarkedMessageIds = useChatStore((s) => s.bookmarkedMessageIds)
@@ -627,7 +627,7 @@ export function ChatMessage({ message, isOwn, showSender, isGrouped, isLastInGro
                   </DropdownMenuItem>
 
                   {/* Forward */}
-                  {onForward && message.type !== 'system' && (
+                  {onForward && (
                     <DropdownMenuItem onClick={() => onForward(message)}>
                       <ArrowRightLeft className="h-4 w-4 mr-2" />
                       Forward
@@ -643,7 +643,7 @@ export function ChatMessage({ message, isOwn, showSender, isGrouped, isLastInGro
                   )}
 
                   {/* Bookmark */}
-                  {onBookmark && message.type !== 'system' && !message.deletedAt && (
+                  {onBookmark && !message.deletedAt && (
                     <DropdownMenuItem onClick={() => onBookmark(message)}>
                       {bookmarkedMessageIds.has(message.id) ? (
                         <BookmarkCheck className="h-4 w-4 mr-2 text-amber-500" />
@@ -708,13 +708,13 @@ export function ChatMessage({ message, isOwn, showSender, isGrouped, isLastInGro
           <Copy className="h-4 w-4 mr-2" />
           {copied ? 'Copied!' : 'Copy text'}
         </ContextMenuItem>
-        {onForward && message.type !== 'system' && (
+        {onForward && (
           <ContextMenuItem onClick={() => onForward(message)}>
             <ArrowRightLeft className="h-4 w-4 mr-2" />
             Forward
           </ContextMenuItem>
         )}
-        {onBookmark && message.type !== 'system' && !message.deletedAt && (
+        {onBookmark && !message.deletedAt && (
           <ContextMenuItem onClick={() => onBookmark(message)}>
             {bookmarkedMessageIds.has(message.id) ? (
               <BookmarkCheck className="h-4 w-4 mr-2 text-amber-500" />

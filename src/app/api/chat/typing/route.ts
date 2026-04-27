@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { chatBus } from '@/lib/chat-bus'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {

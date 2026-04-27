@@ -402,6 +402,7 @@ function ChatApp() {
                 type: 'text',
                 fileUrl: '',
                 fileName: '',
+                fileType: '',
                 status: 'sent',
                 timestamp: data.message.timestamp || new Date().toISOString(),
               }

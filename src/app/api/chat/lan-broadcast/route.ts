@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { chatBus } from '@/lib/chat-bus'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 /**
  * Send a broadcast message to ALL LAN Messenger clients on the network.

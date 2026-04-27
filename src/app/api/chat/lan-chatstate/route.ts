@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { lanBridge } from '@/lib/lan-bridge-core'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 /**
  * Send various commands to a LAN user.

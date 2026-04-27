@@ -162,7 +162,7 @@ export const MessageInput = forwardRef<MessageInputHandle, MessageInputProps>(
 
     const handleInputChange = useCallback(() => {
       const file = fileInputRef.current?.files
-      handleFileSelect(file)
+      handleFileSelect(file ?? null)
       // Reset input so the same file can be selected again
       if (fileInputRef.current) {
         fileInputRef.current.value = ''

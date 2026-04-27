@@ -10,7 +10,7 @@ import { useChatStore, type ChatRoom, type ChatMessage } from '@/lib/chat-store'
 import { playSendSound } from '@/lib/sounds'
 import { getInitials, getAvatarColor, getStatusColor } from '@/lib/chat-helpers'
 import { ChatMessage as ChatMessageBubble } from './chat-message'
-import { MessageInput, type UploadedFile, type VoiceRecording } from './message-input'
+import { MessageInput, type MessageInputHandle, type UploadedFile, type VoiceRecording } from './message-input'
 import { MessageSearch } from './message-search'
 import { ForwardDialog } from './forward-dialog'
 
@@ -91,7 +91,7 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
   const [showScrollToBottom, setShowScrollToBottom] = useState(false)
   const prevRoomRef = useRef<string | null>(null)
   const [roomTransitioning, setRoomTransitioning] = useState(false)
-  const messageInputRef = useRef<{ focus: () => void }>(null)
+  const messageInputRef = useRef<MessageInputHandle>(null)
   const [searchOpen, setSearchOpen] = useState(false)
   const [scrollToMessageId, setScrollToMessageId] = useState<string | null>(null)
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null)
@@ -274,11 +274,14 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
       // Show unread badge animation when switching to a room with unread messages
       const currentUnread = unreadCounts.get(activeRoom) || 0
       if (currentUnread > 0) {
-        setUnreadBadgeCount(currentUnread)
-        setShowUnreadBadge(true)
+        const showTimer = setTimeout(() => {
+          setUnreadBadgeCount(currentUnread)
+          setShowUnreadBadge(true)
+        }, 0)
         const badgeTimer = setTimeout(() => setShowUnreadBadge(false), 2000)
         return () => {
           clearTimeout(timer)
+          clearTimeout(showTimer)
           clearTimeout(badgeTimer)
         }
       }
@@ -771,7 +774,7 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
               const isOwn = msg.sender?.id === currentUser?.id || !msg.sender
               const showSender = activeRoomData.type !== 'private' && msg.type !== 'system'
               const grouped = isWithinGroupWindow(prevMsg, msg) && !isOwn
-              const isLastInGroup = !nextMsg || nextMsg.sender?.id !== msg.sender?.id || new Date(nextMsg.timestamp).getTime() - new Date(msg.timestamp).getTime() > 120000 || nextMsg.deletedAt
+              const isLastInGroup = !nextMsg || nextMsg.sender?.id !== msg.sender?.id || new Date(nextMsg.timestamp).getTime() - new Date(msg.timestamp).getTime() > 120000 || Boolean(nextMsg.deletedAt)
 
               // Check if this is the first message after the last read boundary
               const lastReadId = activeRoom ? lastReadMessageIds.get(activeRoom) : undefined

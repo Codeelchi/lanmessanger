@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { chatBus } from '@/lib/chat-bus'
 
 export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
 
 export async function POST(request: NextRequest) {
   try {
@@ -79,7 +80,16 @@ export async function POST(request: NextRequest) {
     const messageType = fileUrl && !isImage ? 'file' : 'text'
 
     // Store message
-    const messageData: Record<string, unknown> = {
+    const messageData: {
+      roomId: string
+      senderId: string
+      content: string
+      type: string
+      status: string
+      fileUrl?: string
+      fileName?: string
+      replyToId?: string
+    } = {
       roomId: targetRoomId,
       senderId,
       content: content || '',

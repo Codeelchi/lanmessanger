@@ -255,7 +255,8 @@ export function RoomList({
   }, [currentRoomIds, prevRoomIds])
 
   useEffect(() => {
-    setPrevRoomIds(currentRoomIds)
+    const timer = setTimeout(() => setPrevRoomIds(currentRoomIds), 0)
+    return () => clearTimeout(timer)
   }, [currentRoomIds])
 
   return (
