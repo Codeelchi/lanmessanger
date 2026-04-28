@@ -94,7 +94,7 @@ export function UserInfoPanel({
 
   const typeLabel = room.type === 'broadcast' ? 'Broadcast' : room.type === 'group' ? 'Group' : 'Direct'
   const typeColor = room.type === 'broadcast' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300'
-    : room.type === 'group' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300'
+    : room.type === 'group' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300'
     : 'bg-sky-100 text-sky-700 dark:bg-sky-900 dark:text-sky-300'
 
   return (
@@ -102,8 +102,8 @@ export function UserInfoPanel({
       {/* Room Info */}
       <div className="p-4 border-b border-border/50">
         <div className="flex items-center gap-3 mb-3">
-          <Avatar className="h-12 w-12 ring-2 ring-emerald-500/10">
-            <AvatarFallback className="text-base font-semibold bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 dark:from-emerald-900/50 dark:to-teal-900/50 dark:text-emerald-300">
+          <Avatar className="h-12 w-12 ring-2 ring-indigo-500/10">
+            <AvatarFallback className="text-base font-semibold bg-gradient-to-br from-indigo-100 to-violet-100 text-indigo-700 dark:from-indigo-900/50 dark:to-violet-900/50 dark:text-indigo-300">
               {getInitials(room.name || 'Room')}
             </AvatarFallback>
           </Avatar>
@@ -144,7 +144,7 @@ export function UserInfoPanel({
                     </Button>
                     <Button
                       size="sm"
-                      className="h-7 px-2 text-[10px] rounded-md bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="h-7 px-2 text-[10px] rounded-md bg-indigo-600 hover:bg-indigo-700 text-white"
                       onClick={handleSaveDescription}
                     >
                       <Check className="h-3 w-3 mr-1" />

@@ -71,11 +71,11 @@ interface RoomListProps {
 }
 
 function getRoomIcon(type: string, name: string) {
-  if (name?.startsWith('LAN: ')) return <Wifi className="h-4 w-4 text-emerald-500" />
+  if (name?.startsWith('LAN: ')) return <Wifi className="h-4 w-4 text-indigo-500" />
   switch (type) {
     case 'broadcast': return <Radio className="h-4 w-4 text-amber-500" />
-    case 'group': return <Users className="h-4 w-4 text-emerald-500" />
-    default: return <MessageSquare className="h-4 w-4 text-teal-500" />
+    case 'group': return <Users className="h-4 w-4 text-indigo-500" />
+    default: return <MessageSquare className="h-4 w-4 text-violet-500" />
   }
 }
 
@@ -133,7 +133,7 @@ function DMPickerDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <UserPlus className="h-4 w-4 text-emerald-500" />
+            <UserPlus className="h-4 w-4 text-indigo-500" />
             Start a Conversation
           </DialogTitle>
           <DialogDescription>
@@ -267,8 +267,8 @@ export function RoomList({
         <div className="p-3 border-b border-border/50">
           <div className="flex items-center gap-2.5">
             <div className="relative">
-              <Avatar className="h-10 w-10 ring-2 ring-emerald-500/20">
-                <AvatarFallback className="text-sm font-semibold bg-gradient-to-br from-emerald-100 to-teal-100 text-emerald-700 dark:from-emerald-900/60 dark:to-teal-900/60 dark:text-emerald-300">
+              <Avatar className="h-10 w-10 ring-2 ring-indigo-500/20">
+                <AvatarFallback className="text-sm font-semibold bg-gradient-to-br from-indigo-100 to-violet-100 text-indigo-700 dark:from-indigo-900/60 dark:to-violet-900/60 dark:text-indigo-300">
                   {currentUser ? getInitials(currentUser.displayName || currentUser.username) : '?'}
                 </AvatarFallback>
               </Avatar>
@@ -279,9 +279,9 @@ export function RoomList({
                   {currentUser?.displayName || currentUser?.username || 'Anonymous'}
                 </p>
                 <p className="text-[10px] text-muted-foreground flex items-center gap-1 truncate">
-                  <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${isConnected ? 'bg-emerald-500' : 'bg-destructive'}`} />
+                  <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${isConnected ? 'bg-indigo-500' : 'bg-destructive'}`} />
                   {isConnected ? (
-                    <span className="text-emerald-600 dark:text-emerald-400 flex-shrink-0">Connected</span>
+                    <span className="text-indigo-600 dark:text-indigo-400 flex-shrink-0">Connected</span>
                   ) : (
                     <span className="text-destructive flex-shrink-0">Disconnected</span>
                   )}
@@ -374,7 +374,7 @@ export function RoomList({
               className={`flex-1 text-[10px] h-6 px-2 capitalize rounded-lg transition-all duration-200 ${
                 currentUser?.status === status
                   ? status === 'online'
-                    ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/20'
+                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/20'
                     : status === 'away'
                     ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm shadow-amber-500/20'
                     : 'bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/20'
@@ -396,7 +396,7 @@ export function RoomList({
               placeholder="Search conversations..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-8 pl-8 pr-7 text-xs rounded-lg border-border/50 bg-muted/30 focus-visible:bg-background focus-visible:border-emerald-500/40 transition-all"
+              className="h-8 pl-8 pr-7 text-xs rounded-lg border-border/50 bg-muted/30 focus-visible:bg-background focus-visible:border-indigo-500/40 transition-all"
             />
             {search && (
               <button
@@ -418,13 +418,13 @@ export function RoomList({
                 <TooltipTrigger asChild>
                   <button
                     onClick={() => setShowDMPicker(true)}
-                    className="w-full flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl mb-0.5 transition-all duration-200 text-left hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:scale-[1.01] active:scale-[0.99] group border border-transparent hover:border-emerald-200/60 dark:hover:border-emerald-800/40 animate-subtle-pulse"
+                    className="w-full flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl mb-0.5 transition-all duration-200 text-left hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:scale-[1.01] active:scale-[0.99] group border border-transparent hover:border-indigo-200/60 dark:hover:border-indigo-800/40 animate-subtle-pulse"
                   >
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center flex-shrink-0 group-hover:shadow-sm group-hover:shadow-emerald-500/10 transition-all">
-                      <Plus className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/40 dark:to-violet-900/40 flex items-center justify-center flex-shrink-0 group-hover:shadow-sm group-hover:shadow-indigo-500/10 transition-all">
+                      <Plus className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 truncate">
+                      <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">
                         New Conversation
                       </p>
                       <p className="text-[11px] text-muted-foreground/70 truncate">
@@ -467,7 +467,7 @@ export function RoomList({
           <Button
             variant="outline"
             size="sm"
-            className="w-full text-xs rounded-lg border-dashed border-border/80 hover:border-emerald-500/40 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all"
+            className="w-full text-xs rounded-lg border-dashed border-border/80 hover:border-indigo-500/40 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all"
             onClick={() => setShowNewGroup(true)}
           >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
@@ -475,7 +475,7 @@ export function RoomList({
           </Button>
           <p className="text-[10px] text-muted-foreground/60 text-center mt-2">
             <span className="inline-flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span className="h-1.5 w-1.5 rounded-full bg-indigo-500" />
               {onlineCount} user{onlineCount !== 1 ? 's' : ''} online
             </span>
           </p>
@@ -497,7 +497,7 @@ export function RoomList({
                 <SheetTitle className="text-left flex items-center gap-2">
                   <div className="relative">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">
+                      <AvatarFallback className="text-xs font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300">
                         {currentUser ? getInitials(currentUser.displayName || currentUser.username) : '?'}
                       </AvatarFallback>
                     </Avatar>
@@ -540,11 +540,11 @@ export function RoomList({
                   onClick={() => setShowDMPicker(true)}
                   className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg mb-2 transition-all duration-150 text-left hover:bg-muted/60 group"
                 >
-                  <div className="h-8 w-8 rounded-full bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center flex-shrink-0">
-                    <Plus className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <div className="h-8 w-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center flex-shrink-0">
+                    <Plus className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-emerald-600 dark:text-emerald-400 truncate">New Conversation</p>
+                    <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">New Conversation</p>
                     <p className="text-[11px] text-muted-foreground truncate">Start a direct message</p>
                   </div>
                 </button>
@@ -590,7 +590,7 @@ export function RoomList({
         <Badge variant="secondary" className="text-[10px] ml-auto">
           {onlineCount} online
         </Badge>
-        <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500' : 'bg-destructive'}`} />
+        <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-indigo-500' : 'bg-destructive'}`} />
       </div>
 
       <NewGroupDialog
@@ -630,7 +630,7 @@ function LANUserSection({
       <div className="flex items-center gap-2 px-2 mb-1.5">
         <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent" />
         <div className="flex items-center gap-1.5 px-1">
-          <Globe className="h-3 w-3 text-emerald-500" />
+          <Globe className="h-3 w-3 text-indigo-500" />
           <p className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">
             LAN Network
           </p>
@@ -640,12 +640,12 @@ function LANUserSection({
 
       {/* Bridge Status */}
       <div className="flex items-center gap-2 px-2.5 py-1.5 mb-1">
-        <span className={`h-2 w-2 rounded-full flex-shrink-0 ${isBridgeRunning ? 'bg-emerald-500 animate-pulse-glow shadow-sm shadow-emerald-500/30' : 'bg-destructive/70'}`} />
-        <span className={`text-[10px] font-medium ${isBridgeRunning ? 'text-emerald-600 dark:text-emerald-400' : 'text-destructive/70'}`}>
+        <span className={`h-2 w-2 rounded-full flex-shrink-0 ${isBridgeRunning ? 'bg-indigo-500 animate-pulse-glow shadow-sm shadow-indigo-500/30' : 'bg-destructive/70'}`} />
+        <span className={`text-[10px] font-medium ${isBridgeRunning ? 'text-indigo-600 dark:text-indigo-400' : 'text-destructive/70'}`}>
           {isBridgeRunning ? 'Connected' : 'Not running'}
         </span>
         {lanUsers.length > 0 && (
-          <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 ml-auto bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-medium">
+          <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 ml-auto bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 font-medium">
             {lanUsers.length} user{lanUsers.length !== 1 ? 's' : ''}
           </Badge>
         )}
@@ -660,7 +660,7 @@ function LANUserSection({
                 {isLANLoading ? (
                   <Loader2 className="h-3 w-3 text-muted-foreground animate-spin" />
                 ) : (
-                  <RefreshCw className="h-3 w-3 text-muted-foreground hover:text-emerald-500 transition-colors" />
+                  <RefreshCw className="h-3 w-3 text-muted-foreground hover:text-indigo-500 transition-colors" />
                 )}
               </button>
             </TooltipTrigger>
@@ -682,15 +682,15 @@ function LANUserSection({
                 className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-200 text-left hover:bg-muted/50 hover:scale-[1.01] active:scale-[0.99] group"
               >
                 <div className="relative flex-shrink-0">
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/40 dark:to-teal-900/40 flex items-center justify-center">
-                    <Wifi className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/40 dark:to-violet-900/40 flex items-center justify-center">
+                    <Wifi className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
                   </div>
                   <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-background ${getStatusColor(mappedStatus)} ${isOnline ? 'animate-pulse-glow' : ''}`} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <p className="text-sm font-medium truncate">{user.name}</p>
-                    <Badge variant="secondary" className="text-[8px] px-1 py-0 h-3.5 font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 border-0 shrink-0">
+                    <Badge variant="secondary" className="text-[8px] px-1 py-0 h-3.5 font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 border-0 shrink-0">
                       LAN
                     </Badge>
                   </div>
@@ -757,7 +757,7 @@ function RoomGroup({
             onClick={() => onSelect(room.id)}
             className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl mb-0.5 transition-all duration-200 text-left group relative overflow-hidden room-item-hover ${
               isActive
-                ? 'bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/20 text-emerald-900 dark:text-emerald-100 shadow-sm ring-1 ring-emerald-200/50 dark:ring-emerald-800/40 active-room-border'
+                ? 'bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-900/30 dark:to-violet-900/20 text-indigo-900 dark:text-indigo-100 shadow-sm ring-1 ring-indigo-200/50 dark:ring-indigo-800/40 active-room-border'
                 : 'hover:bg-muted/50 active:scale-[0.99]'
             } ${isNew ? 'animate-fade-in' : ''}`}
             style={{ animationDelay: isNew ? '0ms' : `${index * 40}ms` }}
@@ -772,7 +772,7 @@ function RoomGroup({
                 <TooltipProvider delayDuration={400}>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 ${isActive ? 'border-emerald-100 dark:border-emerald-900/30' : 'border-background'} ${getStatusColor(otherUserStatus)} ${otherUserStatus === 'online' ? 'animate-pulse-glow' : ''}`} />
+                      <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 ${isActive ? 'border-indigo-100 dark:border-indigo-900/30' : 'border-background'} ${getStatusColor(otherUserStatus)} ${otherUserStatus === 'online' ? 'animate-pulse-glow' : ''}`} />
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="text-[10px]">
                       {otherUserStatus === 'offline' && otherMember?.user?.lastSeen
@@ -783,7 +783,7 @@ function RoomGroup({
                 </TooltipProvider>
               </div>
             ) : (
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${isActive ? 'bg-emerald-100 dark:bg-emerald-800/40' : 'bg-muted'}`}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center flex-shrink-0 ${isActive ? 'bg-indigo-100 dark:bg-indigo-800/40' : 'bg-muted'}`}>
                 {getRoomIcon(room.type, room.name)}
               </div>
             )}
@@ -808,7 +808,7 @@ function RoomGroup({
             {/* Unread Badge */}
             {unread > 0 && (
               <span className="flex items-center justify-center flex-shrink-0">
-                <span className="h-5 min-w-5 px-1.5 rounded-full bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm shadow-emerald-500/30 animate-fade-in animate-breathe-dot">
+                <span className="h-5 min-w-5 px-1.5 rounded-full bg-indigo-500 text-white text-[10px] font-bold flex items-center justify-center shadow-sm shadow-indigo-500/30 animate-fade-in animate-breathe-dot">
                   {unread <= 9 ? unread : '9+'}
                 </span>
               </span>
