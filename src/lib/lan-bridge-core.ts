@@ -322,6 +322,8 @@ class LANBridge {
       { message: content, broadcast: content, name: this.localUserName }
     )
 
+    this.sendBroadcastDatagram(Buffer.from(xml, 'utf-8'))
+
     console.log(`[LAN Bridge] Sending broadcast to ${this.lanUsers.size} LAN users`)
     console.log(`[LAN Bridge]   from=${this.localUserId}, XML: ${xml.substring(0, 300)}`)
     for (const user of this.lanUsers.values()) {
@@ -551,7 +553,9 @@ class LANBridge {
     const mac = this.getMacAddress()
     const hostName = hostname() || 'webuser'
     this.localUserName = process.env.LAN_USERNAME || hostName
-    this.localUserId = mac + this.localUserName
+    // Add colon-stripped mac with username to match C++ implementation
+    // lmc/src/messaging.cpp createUserId
+    this.localUserId = mac.replace(/:/g, '') + this.localUserName
     this.localAddress = this.getLocalIPAddress()
   }
 
@@ -586,10 +590,10 @@ class LANBridge {
       if (!iface) continue
       for (const entry of iface) {
         if (entry.internal || entry.family !== 'IPv4') continue
-        return (entry.mac || '000000000000').replace(/:/g, '').toUpperCase()
+        return (entry.mac || '00:00:00:00:00:00').toUpperCase()
       }
     }
-    return '000000000000'
+    return '00:00:00:00:00:00'
   }
 
   private computeSubnetBroadcast(ip: string): string {
@@ -757,6 +761,8 @@ class LANBridge {
   }
 
   private queueTcpXml(user: LANUser, xml: string): void {
+    const frame = this.buildDatagram('MESSAG', xml)
+    xml = frame.toString('utf-8')
     const peer = this.ensureTcpConnection(user)
     if (!peer) return
 
@@ -825,7 +831,7 @@ class LANBridge {
       .map(([k, v]) => `    <${k}>${this.escapeXml(v)}</${k}>`)
       .join('\n')
 
-    return `<${APP_MARKER}>\n  <head>\n${headEntries}\n  </head>\n  <body>\n${bodyEntries}\n  </body>\n</${APP_MARKER}>`
+    return `<?xml version="1.0"?><${APP_MARKER}>\n  <head>\n${headEntries}\n  </head>\n  <body>\n${bodyEntries}\n  </body>\n</${APP_MARKER}>`
   }
 
   private escapeXml(str: string): string {
@@ -920,7 +926,7 @@ class LANBridge {
     if (type !== 'BRDCST' && type !== 'MESSAG' && type !== 'PUBKEY') {
       const fullData = data.toString('utf-8')
       if (fullData.includes(APP_MARKER)) {
-        return { type: 'UNKNOWN', xml: fullData }
+        return { type: 'BRDCST', xml: fullData }
       }
     }
     return { type, xml }
@@ -941,6 +947,10 @@ class LANBridge {
   }
 
   private sendBroadcastDatagram(message: Buffer): void {
+    // Prefix with BRDCST
+    const datagram = this.buildDatagram('BRDCST', message.toString('utf-8'));
+    message = datagram;
+
     this.sendUdpTo(message, MULTICAST_ADDR, this.udpPort)
     for (const addr of this.broadcastAddresses) {
       this.sendUdpTo(message, addr, this.udpPort)
