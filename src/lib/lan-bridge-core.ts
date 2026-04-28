@@ -1075,7 +1075,7 @@ class LANBridge {
       case 'publicmessage': {
         const content = body.message || body.broadcast || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'broadcast', rinfo)
           this.registerOrUpdateUser(fromUserId, {
             address: rinfo.address,
@@ -1096,7 +1096,7 @@ class LANBridge {
       case 'message': {
         const content = body.message || ''
         if (content && head.to === this.localUserId) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'message', rinfo)
           // Auto-acknowledge private messages
           if (messageId) this.sendAcknowledge(fromUserId, messageId)
@@ -1242,7 +1242,7 @@ class LANBridge {
       case 'message': {
         const content = body.message || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'message', rinfo)
           if (messageId) this.sendAcknowledge(fromUserId, messageId)
         }
@@ -1253,7 +1253,7 @@ class LANBridge {
       case 'publicmessage': {
         const content = body.message || body.broadcast || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'broadcast', rinfo)
         }
         break
@@ -1272,7 +1272,7 @@ class LANBridge {
       case 'groupmessage': {
         const content = body.message || body.groupmessage || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           const thread = body.thread || ''
           await this.forwardToWebChat(sender, fromUserId, content, 'groupmessage', rinfo, thread)
         }
@@ -1414,7 +1414,7 @@ class LANBridge {
         // File transfer initiation — LAN Messenger uses this to notify about incoming files
         const fileName = body.message || body.file || ''
         const fileSize = body.size || ''
-        const sender = body.name || fromUserId
+        const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
         console.log(`[LAN Bridge] File transfer from ${sender}: ${fileName} (${fileSize} bytes)`)
         // Notify web chat about the file offer (actual file transfer requires TCP)
         await this.forwardToWebChat(
