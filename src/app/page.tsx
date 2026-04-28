@@ -1535,7 +1535,7 @@ function ChatApp() {
       </div>
 
       {/* Mobile Layout */}
-      <div className="md:hidden flex flex-1 overflow-hidden pt-12 relative">
+      <div className="md:hidden flex flex-1 overflow-hidden relative pb-20 pt-0">
         {/* Room List - slides left when hidden */}
         <div className={`absolute inset-0 overflow-hidden transition-transform duration-300 ease-out ${mobileShowChat ? '-translate-x-full' : 'translate-x-0'}`}>
           <RoomList
@@ -1579,7 +1579,7 @@ function ChatApp() {
           />
 
           {/* Mobile FAB for info / online users */}
-          <div className="fixed bottom-20 right-4 flex gap-2 z-50">
+          <div className="hidden">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
@@ -1650,7 +1650,7 @@ function ChatApp() {
       {/* Keyboard Shortcut Button - Mobile */}
       <button
         onClick={() => setShowKeyboardShortcuts(true)}
-        className="md:hidden fixed bottom-3 left-3 z-30 flex items-center justify-center h-9 w-9 rounded-full bg-muted/80 border border-border/40 hover:border-indigo-500/40 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all duration-200 group shadow-sm"
+        className="hidden rounded-full bg-muted/80 border border-border/40 hover:border-indigo-500/40 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all duration-200 group shadow-sm"
         title="Keyboard Shortcuts"
       >
         <Keyboard className="h-4 w-4 text-muted-foreground/70 group-hover:text-indigo-500 transition-colors" />

@@ -261,8 +261,42 @@ export function RoomList({
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex flex-col w-72 lg:w-80 border-r border-border/50 bg-gradient-to-b from-muted/40 to-muted/20 dark:from-muted/20 dark:to-muted/10 h-full gradient-line-top">
+      {/* Mobile View */}
+      <div className="md:hidden flex flex-col h-full bg-background w-full">
+        <div className="pt-4 pb-2 px-4 bg-background z-10 sticky top-0 border-b border-border/20 backdrop-blur-md bg-background/80">
+          <h1 className="text-2xl font-bold tracking-tight">Chats</h1>
+          <div className="flex items-center justify-between mt-1 text-sm text-muted-foreground">
+            <span>{onlineCount} online</span>
+            <span className="flex items-center gap-1">
+              <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-indigo-500 animate-pulse' : 'bg-red-500'}`} />
+              {isConnected ? 'Connected' : 'Disconnected'}
+            </span>
+          </div>
+        </div>
+        <ScrollArea className="flex-1 px-2 pb-24 scroll-smooth">
+          {/* DM Quick Start */}
+          <div className="mb-2 mt-2">
+            <button
+              onClick={() => setShowDMPicker(true)}
+              className="w-full flex items-center gap-2.5 px-2.5 py-2.5 rounded-xl transition-all duration-200 text-left hover:bg-indigo-50 dark:hover:bg-indigo-900/20 group border border-transparent"
+            >
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 dark:from-indigo-900/40 dark:to-violet-900/40 flex items-center justify-center flex-shrink-0">
+                <Plus className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">New Conversation</p>
+                <p className="text-[11px] text-muted-foreground/70 truncate">Start a direct message</p>
+              </div>
+            </button>
+          </div>
+
+          <LANUserSection lanUsers={lanUsers} isBridgeRunning={isBridgeRunning} isLANLoading={isLANLoading} onRefresh={onRefreshLAN} onUserClick={onLANUserClick} />
+          {broadcasts.length > 0 && <RoomGroup label="Broadcast" rooms={broadcasts} activeRoom={activeRoom} onSelect={onSelectRoom} currentUser={currentUser} newRoomIds={newRoomIds} unreadCounts={unreadCounts} />}
+          {groups.length > 0 && <RoomGroup label="Groups" rooms={groups} activeRoom={activeRoom} onSelect={onSelectRoom} currentUser={currentUser} newRoomIds={newRoomIds} unreadCounts={unreadCounts} />}
+          <RoomGroup label="Direct Messages" rooms={privates} activeRoom={activeRoom} onSelect={onSelectRoom} currentUser={currentUser} newRoomIds={newRoomIds} unreadCounts={unreadCounts} />
+        </ScrollArea>
+      </div>
+      <div className="hidden md:flex flex-col w-[320px] lg:w-[360px] border-r border-border/30 bg-background h-full shadow-[4px_0_24px_-12px_rgba(0,0,0,0.1)] relative z-10">
         {/* User Profile */}
         <div className="p-3 border-b border-border/50">
           <div className="flex items-center gap-2.5">
@@ -483,16 +517,24 @@ export function RoomList({
       </div>
 
       {/* Mobile Header */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 mobile-header-glass px-3 py-2 flex items-center gap-2">
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-t border-border/40 px-6 py-2 flex items-center justify-between shadow-[0_-8px_30px_-12px_rgba(0,0,0,0.12)] pb-safe rounded-t-3xl">
+        <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl flex flex-col gap-1 items-center justify-center text-indigo-500 bg-indigo-500/10">
+          <MessageSquare className="h-6 w-6" />
+          <span className="text-[10px] font-semibold">Chats</span>
+        </Button>
+        <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl flex flex-col gap-1 items-center justify-center text-muted-foreground hover:text-indigo-500 hover:bg-indigo-500/5">
+          <Users className="h-6 w-6" />
+          <span className="text-[10px] font-medium">Users</span>
+        </Button>
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Menu className="h-5 w-5" />
+            <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl flex flex-col gap-1 items-center justify-center text-muted-foreground hover:text-indigo-500 hover:bg-indigo-500/5">
+              <Menu className="h-6 w-6" />
+              <span className="text-[10px] font-medium">Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-80 p-0">
-            {/* Mobile sidebar content */}
-            <div className="flex flex-col h-full">
+          <SheetContent side="bottom" className="h-[80vh] rounded-t-3xl p-0">
+            <div className="flex flex-col h-full bg-background/95 backdrop-blur-xl rounded-t-3xl">
               <SheetHeader className="p-3 border-b">
                 <SheetTitle className="text-left flex items-center gap-2">
                   <div className="relative">
@@ -586,11 +628,8 @@ export function RoomList({
             </div>
           </SheetContent>
         </Sheet>
-        <h1 className="text-sm font-bold">LAN Chat</h1>
-        <Badge variant="secondary" className="text-[10px] ml-auto">
-          {onlineCount} online
-        </Badge>
-        <span className={`h-2 w-2 rounded-full ${isConnected ? 'bg-indigo-500' : 'bg-destructive'}`} />
+
+
       </div>
 
       <NewGroupDialog
