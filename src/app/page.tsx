@@ -50,50 +50,50 @@ function SetupScreen({ onJoin, isConnecting }: { onJoin: (username: string, disp
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-teal-50/30 to-cyan-50 dark:from-gray-950 dark:via-emerald-950/20 dark:to-gray-950 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-indigo-50 via-violet-50/30 to-blue-50 dark:from-gray-950 dark:via-indigo-950/20 dark:to-gray-950 relative overflow-hidden">
       {/* Decorative background orbs with parallax layers */}
-      <div className="absolute top-1/4 -left-24 w-72 h-72 bg-emerald-400/20 dark:bg-emerald-500/10 rounded-full blur-3xl animate-float orb-parallax-slow" style={{ animationDelay: '0s' }} />
-      <div className="absolute bottom-1/4 -right-24 w-96 h-96 bg-teal-400/15 dark:bg-teal-500/8 rounded-full blur-3xl animate-float orb-parallax-medium" style={{ animationDelay: '1.5s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-400/10 dark:bg-cyan-500/5 rounded-full blur-3xl orb-parallax-fast" />
+      <div className="absolute top-1/4 -left-24 w-72 h-72 bg-indigo-400/20 dark:bg-indigo-500/10 rounded-full blur-3xl animate-float orb-parallax-slow" style={{ animationDelay: '0s' }} />
+      <div className="absolute bottom-1/4 -right-24 w-96 h-96 bg-violet-400/15 dark:bg-violet-500/8 rounded-full blur-3xl animate-float orb-parallax-medium" style={{ animationDelay: '1.5s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-400/10 dark:bg-blue-500/5 rounded-full blur-3xl orb-parallax-fast" />
 
       {/* Animated floating particles (CSS only) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="particle-1 absolute top-[15%] left-[10%] h-2 w-2 rounded-full bg-emerald-400/40 dark:bg-emerald-400/20" />
-        <div className="particle-2 absolute top-[25%] right-[15%] h-3 w-3 rounded-full bg-teal-400/30 dark:bg-teal-400/15" />
-        <div className="particle-3 absolute bottom-[30%] left-[20%] h-1.5 w-1.5 rounded-full bg-cyan-400/35 dark:bg-cyan-400/18" />
-        <div className="particle-4 absolute top-[60%] right-[25%] h-2.5 w-2.5 rounded-full bg-emerald-300/25 dark:bg-emerald-300/12" />
-        <div className="particle-5 absolute bottom-[15%] left-[45%] h-2 w-2 rounded-full bg-teal-300/30 dark:bg-teal-300/15" />
-        <div className="particle-2 absolute top-[45%] left-[60%] h-1.5 w-1.5 rounded-full bg-emerald-400/20 dark:bg-emerald-400/10" style={{ animationDelay: '3s' }} />
-        <div className="particle-3 absolute bottom-[50%] right-[10%] h-2 w-2 rounded-full bg-teal-400/25 dark:bg-teal-400/12" style={{ animationDelay: '5s' }} />
-        <div className="particle-1 absolute top-[75%] left-[35%] h-1 w-1 rounded-full bg-cyan-400/30 dark:bg-cyan-400/15" style={{ animationDelay: '2s' }} />
+        <div className="particle-1 absolute top-[15%] left-[10%] h-2 w-2 rounded-full bg-indigo-400/40 dark:bg-indigo-400/20" />
+        <div className="particle-2 absolute top-[25%] right-[15%] h-3 w-3 rounded-full bg-violet-400/30 dark:bg-violet-400/15" />
+        <div className="particle-3 absolute bottom-[30%] left-[20%] h-1.5 w-1.5 rounded-full bg-blue-400/35 dark:bg-blue-400/18" />
+        <div className="particle-4 absolute top-[60%] right-[25%] h-2.5 w-2.5 rounded-full bg-indigo-300/25 dark:bg-indigo-300/12" />
+        <div className="particle-5 absolute bottom-[15%] left-[45%] h-2 w-2 rounded-full bg-violet-300/30 dark:bg-violet-300/15" />
+        <div className="particle-2 absolute top-[45%] left-[60%] h-1.5 w-1.5 rounded-full bg-indigo-400/20 dark:bg-indigo-400/10" style={{ animationDelay: '3s' }} />
+        <div className="particle-3 absolute bottom-[50%] right-[10%] h-2 w-2 rounded-full bg-violet-400/25 dark:bg-violet-400/12" style={{ animationDelay: '5s' }} />
+        <div className="particle-1 absolute top-[75%] left-[35%] h-1 w-1 rounded-full bg-blue-400/30 dark:bg-blue-400/15" style={{ animationDelay: '2s' }} />
       </div>
 
       {/* Connection Status Indicator */}
       <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
         <div className="flex items-center gap-1.5 glass border border-white/20 dark:border-white/10 rounded-full px-3.5 py-1.5 shadow-lg shadow-black/5 dark:shadow-black/20 backdrop-blur-xl">
-          <span className={`h-2 w-2 rounded-full ${!isConnecting ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50 animate-glow-pulse' : 'bg-gray-400 animate-connection-pulse'}`} />
+          <span className={`h-2 w-2 rounded-full ${!isConnecting ? 'bg-indigo-500 shadow-sm shadow-indigo-500/50 animate-glow-pulse' : 'bg-gray-400 animate-connection-pulse'}`} />
           <span className="text-[11px] text-muted-foreground font-medium">
             {!isConnecting ? 'Ready' : 'Loading...'}
           </span>
         </div>
       </div>
 
-      <Card className="w-full max-w-md shadow-2xl shadow-emerald-500/8 shadow-teal-500/5 border border-white/60 dark:border-emerald-900/40 glass-subtle animate-scale-in relative overflow-hidden ring-1 ring-inset ring-white/40 dark:ring-emerald-400/10">
+      <Card className="w-full max-w-md shadow-2xl shadow-indigo-500/8 shadow-violet-500/5 border border-white/60 dark:border-indigo-900/40 glass-subtle animate-scale-in relative overflow-hidden ring-1 ring-inset ring-white/40 dark:ring-indigo-400/10">
         {/* Pattern overlay on card */}
         <div className="absolute inset-0 rounded-[inherit] pattern-overlay pointer-events-none" />
 
         <CardHeader className="text-center pb-2 relative">
-          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-teal-600 flex items-center justify-center mb-5 shadow-lg shadow-emerald-500/25 dark:shadow-emerald-500/15 animate-float">
+          <div className="mx-auto w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-violet-600 flex items-center justify-center mb-5 shadow-lg shadow-indigo-500/25 dark:shadow-indigo-500/15 animate-float">
             <MessageSquare className="h-8 w-8 text-white drop-shadow-sm" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 dark:from-emerald-400 dark:via-teal-300 dark:to-emerald-400 bg-clip-text text-transparent animate-gradient-text">
+          <CardTitle className="text-2xl font-bold tracking-tight bg-gradient-to-r from-indigo-700 via-violet-600 to-indigo-600 dark:from-indigo-400 dark:via-violet-300 dark:to-indigo-400 bg-clip-text text-transparent animate-gradient-text">
             LAN Chat
           </CardTitle>
           <p className="text-sm text-muted-foreground/80 mt-1.5 animate-typing-cursor">
             Lightweight team messaging for your network
-            <span className="animate-gradient-text bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent">.</span>
-            <span className="animate-gradient-text bg-gradient-to-r from-teal-500 via-emerald-600 to-teal-500 dark:from-teal-300 dark:via-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">.</span>
-            <span className="animate-gradient-text bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-600 dark:from-cyan-400 dark:via-teal-300 dark:to-emerald-400 bg-clip-text text-transparent">.</span>
+            <span className="animate-gradient-text bg-gradient-to-r from-indigo-600 via-violet-500 to-blue-500 dark:from-indigo-400 dark:via-violet-300 dark:to-blue-400 bg-clip-text text-transparent">.</span>
+            <span className="animate-gradient-text bg-gradient-to-r from-violet-500 via-indigo-600 to-violet-500 dark:from-violet-300 dark:via-indigo-400 dark:to-violet-300 bg-clip-text text-transparent">.</span>
+            <span className="animate-gradient-text bg-gradient-to-r from-blue-500 via-violet-500 to-indigo-600 dark:from-blue-400 dark:via-violet-300 dark:to-indigo-400 bg-clip-text text-transparent">.</span>
           </p>
         </CardHeader>
         <CardContent className="relative">
@@ -106,7 +106,7 @@ function SetupScreen({ onJoin, isConnecting }: { onJoin: (username: string, disp
                 value={username}
                 onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
                 required
-                className="rounded-xl h-12 border-border/60 bg-muted/30 focus-visible:bg-background focus-visible:border-emerald-500/50 focus-visible:ring-emerald-500/20 transition-all text-sm shadow-sm focus-visible:shadow-md focus-visible:shadow-emerald-500/5"
+                className="rounded-xl h-12 border-border/60 bg-muted/30 focus-visible:bg-background focus-visible:border-indigo-500/50 focus-visible:ring-indigo-500/20 transition-all text-sm shadow-sm focus-visible:shadow-md focus-visible:shadow-indigo-500/5"
                 maxLength={30}
               />
             </div>
@@ -118,7 +118,7 @@ function SetupScreen({ onJoin, isConnecting }: { onJoin: (username: string, disp
                 placeholder="How others see you (optional)"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="rounded-xl h-12 border-border/60 bg-muted/30 focus-visible:bg-background focus-visible:border-emerald-500/50 focus-visible:ring-emerald-500/20 transition-all text-sm shadow-sm focus-visible:shadow-md focus-visible:shadow-emerald-500/5"
+                className="rounded-xl h-12 border-border/60 bg-muted/30 focus-visible:bg-background focus-visible:border-indigo-500/50 focus-visible:ring-indigo-500/20 transition-all text-sm shadow-sm focus-visible:shadow-md focus-visible:shadow-indigo-500/5"
                 maxLength={50}
               />
             </div>
@@ -134,7 +134,7 @@ function SetupScreen({ onJoin, isConnecting }: { onJoin: (username: string, disp
                     className={`flex-1 capitalize text-sm rounded-xl transition-all duration-200 ${
                       status === s
                         ? s === 'online'
-                          ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm shadow-emerald-600/25'
+                          ? 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/25'
                           : s === 'away'
                           ? 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm shadow-amber-500/25'
                           : 'bg-red-500 hover:bg-red-600 text-white shadow-sm shadow-red-500/25'
@@ -151,7 +151,7 @@ function SetupScreen({ onJoin, isConnecting }: { onJoin: (username: string, disp
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl h-11 transition-all duration-200 shadow-lg shadow-emerald-600/25 hover:shadow-xl hover:shadow-emerald-600/30 disabled:opacity-50 disabled:shadow-none animate-shine-effect"
+              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white rounded-xl h-11 transition-all duration-200 shadow-lg shadow-indigo-600/25 hover:shadow-xl hover:shadow-indigo-600/30 disabled:opacity-50 disabled:shadow-none animate-shine-effect"
               disabled={!username.trim() || isConnecting}
             >
               {isConnecting ? 'Connecting...' : 'Join Chat'}
@@ -159,8 +159,8 @@ function SetupScreen({ onJoin, isConnecting }: { onJoin: (username: string, disp
 
             <div className="flex items-center justify-center gap-5 text-[10px] text-muted-foreground/70 pt-3">
               <span className="flex items-center gap-1.5 animate-subtle-pulse">
-                <div className="h-5 w-5 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                  <Shield className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+                <div className="h-5 w-5 rounded-md bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
+                  <Shield className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 End-to-end
               </span>
@@ -171,8 +171,8 @@ function SetupScreen({ onJoin, isConnecting }: { onJoin: (username: string, disp
                 Real-time
               </span>
               <span className="flex items-center gap-1.5 animate-subtle-pulse stagger-3">
-                <div className="h-5 w-5 rounded-md bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
-                  <Radio className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+                <div className="h-5 w-5 rounded-md bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                  <Radio className="h-3 w-3 text-violet-600 dark:text-violet-400" />
                 </div>
                 LAN Ready
               </span>
@@ -1535,7 +1535,7 @@ function ChatApp() {
       </div>
 
       {/* Mobile Layout */}
-      <div className="md:hidden flex flex-1 overflow-hidden pt-12 relative">
+      <div className="md:hidden flex flex-1 overflow-hidden relative pb-20 pt-0">
         {/* Room List - slides left when hidden */}
         <div className={`absolute inset-0 overflow-hidden transition-transform duration-300 ease-out ${mobileShowChat ? '-translate-x-full' : 'translate-x-0'}`}>
           <RoomList
@@ -1579,11 +1579,11 @@ function ChatApp() {
           />
 
           {/* Mobile FAB for info / online users */}
-          <div className="fixed bottom-20 right-4 flex gap-2 z-50">
+          <div className="hidden">
             <Sheet>
               <SheetTrigger asChild>
                 <Button
-                  className="h-10 w-10 rounded-full bg-teal-600 hover:bg-teal-700 text-white shadow-lg transition-all duration-150"
+                  className="h-10 w-10 rounded-full bg-violet-600 hover:bg-violet-700 text-white shadow-lg transition-all duration-150"
                   size="icon"
                 >
                   <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -1642,7 +1642,7 @@ function ChatApp() {
         className="hidden md:flex fixed bottom-3 left-3 z-30 items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] text-muted-foreground/70 hover:text-muted-foreground hover:bg-muted/60 border border-border/40 hover:border-border/70 transition-all duration-200 group shadow-sm"
         title="Keyboard Shortcuts"
       >
-        <Keyboard className="h-3.5 w-3.5 group-hover:text-emerald-500 transition-colors" />
+        <Keyboard className="h-3.5 w-3.5 group-hover:text-indigo-500 transition-colors" />
         <span>Shortcuts</span>
         <kbd className="ml-1 px-1 py-0.5 rounded bg-muted/80 border border-border/50 text-[9px] font-mono">?</kbd>
       </button>
@@ -1650,10 +1650,10 @@ function ChatApp() {
       {/* Keyboard Shortcut Button - Mobile */}
       <button
         onClick={() => setShowKeyboardShortcuts(true)}
-        className="md:hidden fixed bottom-3 left-3 z-30 flex items-center justify-center h-9 w-9 rounded-full bg-muted/80 border border-border/40 hover:border-emerald-500/40 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 group shadow-sm"
+        className="hidden rounded-full bg-muted/80 border border-border/40 hover:border-indigo-500/40 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all duration-200 group shadow-sm"
         title="Keyboard Shortcuts"
       >
-        <Keyboard className="h-4 w-4 text-muted-foreground/70 group-hover:text-emerald-500 transition-colors" />
+        <Keyboard className="h-4 w-4 text-muted-foreground/70 group-hover:text-indigo-500 transition-colors" />
       </button>
     </div>
   )
@@ -1669,7 +1669,7 @@ function ConnectionStatusBar() {
   return (
     <div className={`fixed top-0 left-0 right-0 z-[100] h-[3px] transition-all duration-500 ${
       isConnected
-        ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-500'
+        ? 'bg-gradient-to-r from-indigo-500 via-violet-400 to-indigo-500'
         : 'bg-gradient-to-r from-amber-500 via-orange-400 to-amber-500 animate-pulse'
     }`} />
   )

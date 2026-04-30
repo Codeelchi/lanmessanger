@@ -455,9 +455,9 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
       const msgEl = document.querySelector(`[data-message-id="${scrollToMessageId}"]`)
       if (msgEl) {
         msgEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        msgEl.classList.add('ring-2', 'ring-emerald-400', 'dark:ring-emerald-500')
+        msgEl.classList.add('ring-2', 'ring-indigo-400', 'dark:ring-indigo-500')
         setTimeout(() => {
-          msgEl.classList.remove('ring-2', 'ring-emerald-400', 'dark:ring-emerald-500')
+          msgEl.classList.remove('ring-2', 'ring-indigo-400', 'dark:ring-indigo-500')
         }, 2000)
       }
       setScrollToMessageId(null)
@@ -482,7 +482,7 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
   // Unread badge animation element
   const unreadBadgeEl = showUnreadBadge && unreadBadgeCount > 0 ? (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none animate-bounce-in">
-      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500 text-white text-xs font-semibold shadow-lg shadow-emerald-500/30">
+      <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-500/30">
         <span>{unreadBadgeCount}</span>
         <span>new</span>
       </div>
@@ -495,29 +495,29 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
       <div className="flex-1 flex flex-col items-center justify-center p-8 bg-gradient-to-br from-muted/30 via-background to-muted/10 dark:from-muted/10 dark:via-background dark:to-muted/5 relative overflow-hidden">
         {/* Animated particle dots background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="empty-state-particle absolute top-[12%] left-[8%] h-1.5 w-1.5 rounded-full bg-emerald-400/30 dark:bg-emerald-400/15" style={{ '--duration': '10s', '--delay': '0s', '--drift-x': '25px', '--drift-y': '-35px' } as React.CSSProperties} />
-          <div className="empty-state-particle absolute top-[22%] right-[12%] h-2 w-2 rounded-full bg-teal-400/25 dark:bg-teal-400/12" style={{ '--duration': '12s', '--delay': '2s', '--drift-x': '-20px', '--drift-y': '-28px' } as React.CSSProperties} />
-          <div className="empty-state-particle absolute top-[45%] left-[15%] h-1 w-1 rounded-full bg-emerald-400/20 dark:bg-emerald-400/10" style={{ '--duration': '8s', '--delay': '4s', '--drift-x': '30px', '--drift-y': '-20px' } as React.CSSProperties} />
-          <div className="empty-state-particle absolute bottom-[30%] right-[20%] h-2.5 w-2.5 rounded-full bg-cyan-400/20 dark:bg-cyan-400/10" style={{ '--duration': '11s', '--delay': '1s', '--drift-x': '-25px', '--drift-y': '-32px' } as React.CSSProperties} />
-          <div className="empty-state-particle absolute top-[65%] left-[40%] h-1.5 w-1.5 rounded-full bg-teal-300/20 dark:bg-teal-300/10" style={{ '--duration': '9s', '--delay': '3s', '--drift-x': '18px', '--drift-y': '-25px' } as React.CSSProperties} />
-          <div className="empty-state-particle absolute bottom-[20%] left-[25%] h-2 w-2 rounded-full bg-emerald-300/15 dark:bg-emerald-300/8" style={{ '--duration': '14s', '--delay': '5s', '--drift-x': '-22px', '--drift-y': '-30px' } as React.CSSProperties} />
+          <div className="empty-state-particle absolute top-[12%] left-[8%] h-1.5 w-1.5 rounded-full bg-indigo-400/30 dark:bg-indigo-400/15" style={{ '--duration': '10s', '--delay': '0s', '--drift-x': '25px', '--drift-y': '-35px' } as React.CSSProperties} />
+          <div className="empty-state-particle absolute top-[22%] right-[12%] h-2 w-2 rounded-full bg-violet-400/25 dark:bg-violet-400/12" style={{ '--duration': '12s', '--delay': '2s', '--drift-x': '-20px', '--drift-y': '-28px' } as React.CSSProperties} />
+          <div className="empty-state-particle absolute top-[45%] left-[15%] h-1 w-1 rounded-full bg-indigo-400/20 dark:bg-indigo-400/10" style={{ '--duration': '8s', '--delay': '4s', '--drift-x': '30px', '--drift-y': '-20px' } as React.CSSProperties} />
+          <div className="empty-state-particle absolute bottom-[30%] right-[20%] h-2.5 w-2.5 rounded-full bg-blue-400/20 dark:bg-blue-400/10" style={{ '--duration': '11s', '--delay': '1s', '--drift-x': '-25px', '--drift-y': '-32px' } as React.CSSProperties} />
+          <div className="empty-state-particle absolute top-[65%] left-[40%] h-1.5 w-1.5 rounded-full bg-violet-300/20 dark:bg-violet-300/10" style={{ '--duration': '9s', '--delay': '3s', '--drift-x': '18px', '--drift-y': '-25px' } as React.CSSProperties} />
+          <div className="empty-state-particle absolute bottom-[20%] left-[25%] h-2 w-2 rounded-full bg-indigo-300/15 dark:bg-indigo-300/8" style={{ '--duration': '14s', '--delay': '5s', '--drift-x': '-22px', '--drift-y': '-30px' } as React.CSSProperties} />
         </div>
 
         {/* Main icon group with floating animation */}
         <div className="relative mb-8 animate-slide-up opacity-0 stagger-1">
-          <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-500 flex items-center justify-center shadow-2xl shadow-emerald-500/20 dark:shadow-emerald-500/10 animate-float-bob">
+          <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-indigo-400 via-indigo-500 to-violet-500 flex items-center justify-center shadow-2xl shadow-indigo-500/20 dark:shadow-indigo-500/10 animate-float-bob">
             <MessageSquare className="h-14 w-14 text-white drop-shadow-sm" />
           </div>
           <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-400/30 animate-slow-float-rotate">
             <Zap className="h-4 w-4 text-white" />
           </div>
-          <div className="absolute -bottom-1 -left-1 w-6 h-6 rounded-lg bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg shadow-teal-400/30 animate-slow-float-rotate-2">
+          <div className="absolute -bottom-1 -left-1 w-6 h-6 rounded-lg bg-gradient-to-br from-violet-400 to-blue-500 flex items-center justify-center shadow-lg shadow-violet-400/30 animate-slow-float-rotate-2">
             <ShieldCheck className="h-3 w-3 text-white" />
           </div>
         </div>
 
         {/* Gradient heading with shimmer animation */}
-        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-emerald-700 via-teal-500 to-emerald-600 dark:from-emerald-400 dark:via-teal-300 dark:to-cyan-400 bg-clip-text text-transparent animate-gradient-shimmer-text animate-slide-up opacity-0 stagger-2">
+        <h2 className="text-2xl font-bold mb-2 bg-gradient-to-r from-indigo-700 via-violet-500 to-indigo-600 dark:from-indigo-400 dark:via-violet-300 dark:to-blue-400 bg-clip-text text-transparent animate-gradient-shimmer-text animate-slide-up opacity-0 stagger-2">
           Welcome to LAN Chat
         </h2>
         <p className="text-sm text-muted-foreground/80 text-center max-w-sm mb-10 leading-relaxed animate-slide-up opacity-0 stagger-3">
@@ -527,8 +527,8 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
         {/* Feature cards with staggered entrance */}
         <div className="flex items-center gap-8 text-xs text-muted-foreground">
           <div className="flex flex-col items-center gap-2 animate-slide-up opacity-0 stagger-4">
-            <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shadow-sm shadow-emerald-500/10 hover:shadow-md hover:shadow-emerald-500/20 transition-all duration-200">
-              <ShieldCheck className="h-5.5 w-5.5 text-emerald-600 dark:text-emerald-400" />
+            <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center shadow-sm shadow-indigo-500/10 hover:shadow-md hover:shadow-indigo-500/20 transition-all duration-200">
+              <ShieldCheck className="h-5.5 w-5.5 text-indigo-600 dark:text-indigo-400" />
             </div>
             <span className="font-medium text-muted-foreground/70">Secure</span>
           </div>
@@ -539,8 +539,8 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
             <span className="font-medium text-muted-foreground/70">Real-time</span>
           </div>
           <div className="flex flex-col items-center gap-2 animate-slide-up opacity-0 stagger-6">
-            <div className="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center shadow-sm shadow-teal-500/10 hover:shadow-md hover:shadow-teal-500/20 transition-all duration-200">
-              <UsersRound className="h-5.5 w-5.5 text-teal-600 dark:text-teal-400" />
+            <div className="w-12 h-12 rounded-2xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center shadow-sm shadow-violet-500/10 hover:shadow-md hover:shadow-violet-500/20 transition-all duration-200">
+              <UsersRound className="h-5.5 w-5.5 text-violet-600 dark:text-violet-400" />
             </div>
             <span className="font-medium text-muted-foreground/70">Groups</span>
           </div>
@@ -595,7 +595,7 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
             <Radio className="h-4.5 w-4.5 text-white" />
           </div>
         ) : (
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-md shadow-emerald-400/20">
+          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-400 to-violet-500 flex items-center justify-center shadow-md shadow-indigo-400/20">
             <Users className="h-4.5 w-4.5 text-white" />
           </div>
         )}
@@ -612,7 +612,7 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
                 Broadcast
               </Badge>
             ) : activeRoomData.type === 'group' ? (
-              <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 text-[10px] px-1.5 py-0 font-medium shadow-sm">
+              <Badge className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/50 dark:text-indigo-300 text-[10px] px-1.5 py-0 font-medium shadow-sm">
                 <Users className="h-2.5 w-2.5 mr-0.5" />
                 {memberCount}
               </Badge>
@@ -665,22 +665,22 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
 
       {/* Pinned Message Bar */}
       {pinnedMessage && (
-        <div className="mx-4 mt-2 px-3 py-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200/60 dark:border-emerald-800/40 flex items-center gap-2 animate-fade-in cursor-pointer hover:bg-emerald-100/80 dark:hover:bg-emerald-900/30 transition-colors"
+        <div className="mx-4 mt-2 px-3 py-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200/60 dark:border-indigo-800/40 flex items-center gap-2 animate-fade-in cursor-pointer hover:bg-indigo-100/80 dark:hover:bg-indigo-900/30 transition-colors"
           onClick={() => {
             // Find and scroll to the pinned message
             const msgEl = document.querySelector(`[data-message-id="${pinnedMessage.message.id}"]`)
             if (msgEl) {
               msgEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-              msgEl.classList.add('ring-2', 'ring-emerald-400', 'dark:ring-emerald-500')
+              msgEl.classList.add('ring-2', 'ring-indigo-400', 'dark:ring-indigo-500')
               setTimeout(() => {
-                msgEl.classList.remove('ring-2', 'ring-emerald-400', 'dark:ring-emerald-500')
+                msgEl.classList.remove('ring-2', 'ring-indigo-400', 'dark:ring-indigo-500')
               }, 2000)
             }
           }}
         >
-          <Pin className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+          <Pin className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400 flex-shrink-0" />
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">Pinned by {pinnedMessage.pinnedBy}</p>
+            <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">Pinned by {pinnedMessage.pinnedBy}</p>
             <p className="text-xs text-foreground/80 truncate">
               <span className="font-medium">{pinnedMessage.message.sender?.displayName || pinnedMessage.message.sender?.username || 'Unknown'}:</span>{' '}
               {pinnedMessage.message.content}
@@ -691,9 +691,9 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
               e.stopPropagation()
               handleUnpinMessage()
             }}
-            className="h-6 w-6 rounded-full flex items-center justify-center hover:bg-emerald-200/60 dark:hover:bg-emerald-800/40 transition-colors flex-shrink-0"
+            className="h-6 w-6 rounded-full flex items-center justify-center hover:bg-indigo-200/60 dark:hover:bg-indigo-800/40 transition-colors flex-shrink-0"
           >
-            <X className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+            <X className="h-3 w-3 text-indigo-600 dark:text-indigo-400" />
           </button>
         </div>
       )}
@@ -732,7 +732,7 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
                 size="sm"
                 onClick={loadMoreMessages}
                 disabled={loadingMore}
-                className="gap-2 text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 border border-emerald-200/50 dark:border-emerald-700/40 rounded-full px-4 h-8 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-300/60 dark:hover:border-emerald-600/50"
+                className="gap-2 text-xs text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border border-indigo-200/50 dark:border-indigo-700/40 rounded-full px-4 h-8 shadow-sm transition-all duration-200 hover:shadow-md hover:border-indigo-300/60 dark:hover:border-indigo-600/50"
               >
                 {loadingMore ? (
                   <>
@@ -793,11 +793,11 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
                   )}
                   {showNewMessagesDivider && (
                     <div className="flex items-center gap-3 my-3 px-4">
-                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
-                      <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium px-3 py-1 bg-emerald-50 dark:bg-emerald-900/20 rounded-full shadow-sm border border-emerald-200/50 dark:border-emerald-700/40">
+                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent" />
+                      <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium px-3 py-1 bg-indigo-50 dark:bg-indigo-900/20 rounded-full shadow-sm border border-indigo-200/50 dark:border-indigo-700/40">
                         New messages
                       </span>
-                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
+                      <div className="flex-1 h-px bg-gradient-to-r from-transparent via-indigo-400/40 to-transparent" />
                     </div>
                   )}
                   <ChatMessageBubble
@@ -825,9 +825,9 @@ export function ChatArea({ onBack, onSendMessage, onTyping, onEditMessage, onDel
             <div className="px-4 py-2 animate-fade-in">
               <div className="inline-flex items-center gap-2 text-xs text-muted-foreground px-3 py-1.5 rounded-full bg-muted/30 dark:bg-muted/20">
                 <div className="flex gap-0.5 items-center h-3.5">
-                  <span className="animate-typing-dot h-1.5 w-1.5 rounded-full bg-emerald-500" style={{ animationDelay: '0ms' }} />
-                  <span className="animate-typing-dot h-1.5 w-1.5 rounded-full bg-emerald-500" style={{ animationDelay: '200ms' }} />
-                  <span className="animate-typing-dot h-1.5 w-1.5 rounded-full bg-emerald-500" style={{ animationDelay: '400ms' }} />
+                  <span className="animate-typing-dot h-1.5 w-1.5 rounded-full bg-indigo-500" style={{ animationDelay: '0ms' }} />
+                  <span className="animate-typing-dot h-1.5 w-1.5 rounded-full bg-indigo-500" style={{ animationDelay: '200ms' }} />
+                  <span className="animate-typing-dot h-1.5 w-1.5 rounded-full bg-indigo-500" style={{ animationDelay: '400ms' }} />
                 </div>
                 <span className="italic">
                   {typingNames.length === 1

@@ -27,7 +27,7 @@
 
 import dgram from 'node:dgram'
 import net from 'node:net'
-import { networkInterfaces, hostname } from 'node:os'
+import os from "node:os"
 import {
   constants,
   createCipheriv,
@@ -322,6 +322,8 @@ class LANBridge {
       { message: content, broadcast: content, name: this.localUserName }
     )
 
+    this.sendBroadcastDatagram(Buffer.from(xml, 'utf-8'))
+
     console.log(`[LAN Bridge] Sending broadcast to ${this.lanUsers.size} LAN users`)
     console.log(`[LAN Bridge]   from=${this.localUserId}, XML: ${xml.substring(0, 300)}`)
     for (const user of this.lanUsers.values()) {
@@ -549,9 +551,11 @@ class LANBridge {
 
   private initIdentity(): void {
     const mac = this.getMacAddress()
-    const hostName = hostname() || 'webuser'
+    const hostName = os.hostname() || 'webuser'
     this.localUserName = process.env.LAN_USERNAME || hostName
-    this.localUserId = mac + this.localUserName
+    // Add colon-stripped mac with username to match C++ implementation
+    // lmc/src/messaging.cpp createUserId
+    this.localUserId = mac.replace(/:/g, '') + this.localUserName
     this.localAddress = this.getLocalIPAddress()
   }
 
@@ -567,7 +571,7 @@ class LANBridge {
   // ==================== Network Helpers ====================
 
   private getLocalIPAddress(): string | null {
-    const interfaces = networkInterfaces()
+    const interfaces = os.networkInterfaces()
     for (const name of Object.keys(interfaces)) {
       const iface = interfaces[name]
       if (!iface) continue
@@ -580,16 +584,16 @@ class LANBridge {
   }
 
   private getMacAddress(): string {
-    const interfaces = networkInterfaces()
+    const interfaces = os.networkInterfaces()
     for (const name of Object.keys(interfaces)) {
       const iface = interfaces[name]
       if (!iface) continue
       for (const entry of iface) {
         if (entry.internal || entry.family !== 'IPv4') continue
-        return (entry.mac || '000000000000').replace(/:/g, '').toUpperCase()
+        return (entry.mac || '00:00:00:00:00:00').toUpperCase()
       }
     }
-    return '000000000000'
+    return '00:00:00:00:00:00'
   }
 
   private computeSubnetBroadcast(ip: string): string {
@@ -757,6 +761,8 @@ class LANBridge {
   }
 
   private queueTcpXml(user: LANUser, xml: string): void {
+    const frame = this.buildDatagram('MESSAG', xml)
+    xml = frame.toString('utf-8')
     const peer = this.ensureTcpConnection(user)
     if (!peer) return
 
@@ -825,7 +831,7 @@ class LANBridge {
       .map(([k, v]) => `    <${k}>${this.escapeXml(v)}</${k}>`)
       .join('\n')
 
-    return `<${APP_MARKER}>\n  <head>\n${headEntries}\n  </head>\n  <body>\n${bodyEntries}\n  </body>\n</${APP_MARKER}>`
+    return `<?xml version="1.0"?><${APP_MARKER}>\n  <head>\n${headEntries}\n  </head>\n  <body>\n${bodyEntries}\n  </body>\n</${APP_MARKER}>`
   }
 
   private escapeXml(str: string): string {
@@ -920,7 +926,7 @@ class LANBridge {
     if (type !== 'BRDCST' && type !== 'MESSAG' && type !== 'PUBKEY') {
       const fullData = data.toString('utf-8')
       if (fullData.includes(APP_MARKER)) {
-        return { type: 'UNKNOWN', xml: fullData }
+        return { type: 'BRDCST', xml: fullData }
       }
     }
     return { type, xml }
@@ -941,6 +947,10 @@ class LANBridge {
   }
 
   private sendBroadcastDatagram(message: Buffer): void {
+    // Prefix with BRDCST
+    const datagram = this.buildDatagram('BRDCST', message.toString('utf-8'));
+    message = datagram;
+
     this.sendUdpTo(message, MULTICAST_ADDR, this.udpPort)
     for (const addr of this.broadcastAddresses) {
       this.sendUdpTo(message, addr, this.udpPort)
@@ -1065,7 +1075,7 @@ class LANBridge {
       case 'publicmessage': {
         const content = body.message || body.broadcast || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'broadcast', rinfo)
           this.registerOrUpdateUser(fromUserId, {
             address: rinfo.address,
@@ -1086,7 +1096,7 @@ class LANBridge {
       case 'message': {
         const content = body.message || ''
         if (content && head.to === this.localUserId) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'message', rinfo)
           // Auto-acknowledge private messages
           if (messageId) this.sendAcknowledge(fromUserId, messageId)
@@ -1232,7 +1242,7 @@ class LANBridge {
       case 'message': {
         const content = body.message || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'message', rinfo)
           if (messageId) this.sendAcknowledge(fromUserId, messageId)
         }
@@ -1243,7 +1253,7 @@ class LANBridge {
       case 'publicmessage': {
         const content = body.message || body.broadcast || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           await this.forwardToWebChat(sender, fromUserId, content, 'broadcast', rinfo)
         }
         break
@@ -1262,7 +1272,7 @@ class LANBridge {
       case 'groupmessage': {
         const content = body.message || body.groupmessage || ''
         if (content) {
-          const sender = body.name || fromUserId
+          const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
           const thread = body.thread || ''
           await this.forwardToWebChat(sender, fromUserId, content, 'groupmessage', rinfo, thread)
         }
@@ -1404,7 +1414,7 @@ class LANBridge {
         // File transfer initiation — LAN Messenger uses this to notify about incoming files
         const fileName = body.message || body.file || ''
         const fileSize = body.size || ''
-        const sender = body.name || fromUserId
+        const sender = body.name || (fromUserId.length > 12 ? fromUserId.substring(12) : fromUserId)
         console.log(`[LAN Bridge] File transfer from ${sender}: ${fileName} (${fileSize} bytes)`)
         // Notify web chat about the file offer (actual file transfer requires TCP)
         await this.forwardToWebChat(
