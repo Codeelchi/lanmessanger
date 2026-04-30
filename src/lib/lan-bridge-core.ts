@@ -761,8 +761,6 @@ class LANBridge {
   }
 
   private queueTcpXml(user: LANUser, xml: string): void {
-    const frame = this.buildDatagram('MESSAG', xml)
-    xml = frame.toString('utf-8')
     const peer = this.ensureTcpConnection(user)
     if (!peer) return
 
