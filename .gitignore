@@ -7,3 +7,4 @@ runtime/
 *.db
 *.db-journal
 .env
+bun_output.log

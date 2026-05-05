@@ -27,7 +27,7 @@
 
 import dgram from 'node:dgram'
 import net from 'node:net'
-import { networkInterfaces, hostname } from 'node:os'
+import os from "node:os"
 import {
   constants,
   createCipheriv,
@@ -551,7 +551,7 @@ class LANBridge {
 
   private initIdentity(): void {
     const mac = this.getMacAddress()
-    const hostName = hostname() || 'webuser'
+    const hostName = os.hostname() || 'webuser'
     this.localUserName = process.env.LAN_USERNAME || hostName
     // Add colon-stripped mac with username to match C++ implementation
     // lmc/src/messaging.cpp createUserId
@@ -571,7 +571,7 @@ class LANBridge {
   // ==================== Network Helpers ====================
 
   private getLocalIPAddress(): string | null {
-    const interfaces = networkInterfaces()
+    const interfaces = os.networkInterfaces()
     for (const name of Object.keys(interfaces)) {
       const iface = interfaces[name]
       if (!iface) continue
@@ -584,7 +584,7 @@ class LANBridge {
   }
 
   private getMacAddress(): string {
-    const interfaces = networkInterfaces()
+    const interfaces = os.networkInterfaces()
     for (const name of Object.keys(interfaces)) {
       const iface = interfaces[name]
       if (!iface) continue
